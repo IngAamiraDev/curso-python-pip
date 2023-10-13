@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from starlette.responses import HTMLResponse, FileResponse
+from src.chart_generator import generate_pie_chart_for_continent, generate_bar_chart_for_country
 import pandas as pd
 import uvicorn
 import matplotlib.pyplot as plt
@@ -68,7 +69,7 @@ def visualize_data():
     html_content = f"<html><head></head><body>{data_html}</body></html>"
     return HTMLResponse(content=html_content)
 
-@app.get('/plot_population')
+'''@app.get('/plot_population')
 def plot_population():
     year = 2015  # Year for which you want to generate the graph
     column_name = f"{year} Population"
@@ -87,7 +88,15 @@ def plot_population():
         temp_filename = temp_file.name
         temp_file.write(buffer.read())
 
-    return FileResponse(temp_filename, media_type="image/png")
+    return FileResponse(temp_filename, media_type="image/png")'''
+
+@app.get('/generate_bar_chart/{country_name}')
+def generate_bar_chart_route(country_name: str):
+    country_name_upper = country_name.capitalize()
+    result = df[df['Country'] == country_name_upper]
+    if result.empty:
+        raise HTTPException(status_code=404, detail=f"No data found for the country {country_name}")
+    generate_bar_chart_for_country(df, country_name)
 
 if __name__ == '__main__':
     uvicorn.run(app, host="localhost", port=8000)
