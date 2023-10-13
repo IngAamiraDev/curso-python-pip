@@ -1,0 +1,81 @@
+SO:
+
+pwd: Indica en qué ubicación estamos
+mkdir: Crear una nueva carpeta
+ll: Lista de archivos
+cd: Nos permite abrir una carpeta
+clear: Nos permite despejar la terminal
+git init: Inicializar
+touch: Crear archivos
+rm: sirve para borrar archivos
+rmdir: sirve para borrar directorios
+mv: sirve para mover directorios
+df: indica el espacio en disco, el disponible, usado y total
+
+
+Python:
+
+Comandos Utilizados
+    python:
+    python3:
+    exit() para salir de la interfaz de python
+
+Instalación:
+    apt update
+    sudo apt update
+    sudo apt -y upgrade
+    Verificar Instalación de python
+    python3 -V
+
+Instalación de gestor de paquetes de dependencias
+    sudo apt install -y python3-pip
+    Verificar Instalación del gestor
+    pip3 -V
+
+Dependencias en entorno profesional
+    sudo apt install -y build-essential libssl-dev libffi-dev python3-dev
+
+Verificar donde esta python y pip
+    which python3
+    which pip3
+
+Verificar las instalaciones
+    pip3 freeze
+
+Entorno virtual
+    sudo apt install -y python3-venv # Solo para instalar el ambiente virtual. Si se usa linux o WSL
+    python3 -m venv env #Entorno en cada proyecto
+    alias avenv="source envs/bin/activate"
+
+
+Creación de entorno virtual en Windows:
+    py -m venv venv
+    activar entorno virtual - .\venv\Scripts\activate
+    deactivate - desactivar entorno virtual
+    alias avenv=.\venv\Scripts\activate - crear atajo para activar env.
+
+Requirements
+	pip3 freeze > requirements.txt
+	cat requirements.txt #Revisar lo que hay dentro del archivo
+	pip3 install -r requirements.txt # Instalar las dependencias necesarias para contribuir más rápido en proyectos
+    pip3 freeze > requirements.txt # Actualizar dependencias
+    cat reqruirements.txt # Ver el contenido del archivo
+
+FastAPI
+    pip3 install fastapi
+    pip3 install "uvicorn[standard]" # Agregar ASGI (Asynchronous Server Gateway Interface) Uvicorn
+    uvicorn main:app --reload # Activar el servidor
+
+
+Git:
+
+git init
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+git remote add origin (enlace gitgub)
+git remote -v
+git add .
+git commit -m “test”
+git push origin master
+
+
