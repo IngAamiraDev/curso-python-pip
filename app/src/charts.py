@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
 # Define a common color palette
-colors_palette = ['#FF5733', '#33FF57', '#3366FF', '#FF33FF', '#FF5733', '#33FF57', '#3366FF', '#FF33FF', '#FF5733', '#33FF57']
+colors_palette = ['#FF5733', '#33FF57', '#3366FF', '#FF33FF', '#FFC300', '#33FFD0', '#8033FF', '#4CAF50', '#D500F9', '#FF9800']
 
 def customize_bar_chart(ax):
     """
@@ -37,7 +37,7 @@ def generate_bar_chart(labels, values, country):
     Args:
         labels (list): A list of years.
         values (list): A list of corresponding population values.
-        Country (str): The name of the country.
+        country (str): The name of the country.
 
     Returns:
         None
@@ -45,15 +45,13 @@ def generate_bar_chart(labels, values, country):
     plt.rcParams['font.sans-serif'] = ['Lato']
     plt.rcParams['font.weight'] = "medium"
     fig, ax = plt.subplots()
-    bars = ax.bar(labels, values, width=0.6, color=colors_palette)    
-    min_population = min(values)
-    max_population = max(values)    
+    bars = ax.bar(labels, values, width=0.6, color=colors_palette)
     plt.suptitle(f"Population between {min(labels)} and {max(labels)}", size=10, fontfamily="sans", color="#5f615f", weight="bold",
                 horizontalalignment='left',
                 x=0.038,
                 y=0.94,
                 transform=fig.transFigure)
-    plt.title(f"{country}", size=17, weight='bold', fontfamily="serif", color='#000',
+    plt.title(f"Population of {country}", size=17, weight='bold', fontfamily="serif", color='#000',
               horizontalalignment='left',
               x=0.038,
               y=0.96,
@@ -65,8 +63,9 @@ def generate_bar_chart(labels, values, country):
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width() / 2, height, f'{height/1e6:,.0f} M', ha='center', va='bottom', fontsize=8, fontweight='bold')        
     customize_bar_chart(ax)
-    plt.savefig('./app/img/bar_'+ country + '.png')
+    plt.savefig(f'./img/bar_{country}.png')
     plt.close()
+    print(f'Generated bar chart for {country} in path: "./img"')
 
 def generate_pie_chart(labels, values, continent, top_n=5):
     """
@@ -87,5 +86,6 @@ def generate_pie_chart(labels, values, continent, top_n=5):
     ax.pie(top_values, labels=top_labels, autopct='%1.1f%%', colors=colors_palette, shadow=True, startangle=140)
     ax.axis('equal')
     plt.title(f"Top {top_n} Population Percentage for {continent}", size=14, weight='bold')
-    plt.savefig(f'./app/img/pie_{continent}.png')
+    plt.savefig(f'./img/pie_{continent}.png')
     plt.close()
+    print(f'Generated pie chart for {continent} in path: "./img"')

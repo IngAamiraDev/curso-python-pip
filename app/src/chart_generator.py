@@ -1,4 +1,4 @@
-from src.utils import get_population, population_by_country
+from src.utils import get_population
 from src.charts import generate_bar_chart, generate_pie_chart
 
 def generate_pie_chart_for_continent(data):
@@ -6,18 +6,20 @@ def generate_pie_chart_for_continent(data):
     Generate a pie chart for a specific continent's world population percentage.
 
     Args:
-        data (list of dict): The data containing country information.
+        data (DataFrame): The data containing country information.
 
     Returns:
         None
     """
     continent = input('Type Continent => ')
-    continent_data = list(filter(lambda item: item['Continent'] == continent, data))
-    if not continent_data:
+    continent_data = data[data['Continent'] == continent]
+    if continent_data.empty:
         print(f"No data found for {continent}.")
         return
-    countries = [item['Country'] for item in continent_data]
-    percentages = [item['World Population Percentage'] for item in continent_data]
+
+    countries = continent_data['Country'].values
+    percentages = continent_data['World Population Percentage'].values
+    
     generate_pie_chart(countries, percentages, continent)
 
 def generate_bar_chart_for_country(data):
@@ -25,16 +27,15 @@ def generate_bar_chart_for_country(data):
     Generate a bar chart for a specific country's population over the years.
 
     Args:
-        data (list of dict): The data containing country information.
+        data (DataFrame): The data containing country information.
 
     Returns:
         None
     """
     country = input('Type Country => ')
-    result = population_by_country(data, country)
-    if not result:
+    result = data[data['Country'] == country]
+    if result.empty:
         print(f"No data found for {country}.")
         return
-    country_dict = result[0]
-    labels, values = get_population(country_dict)
+    labels, values = get_population(result)
     generate_bar_chart(labels, values, country)

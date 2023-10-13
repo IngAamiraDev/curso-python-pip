@@ -1,8 +1,7 @@
-import re
 
 def get_population(country_dict):
     """
-    Extracts population data from a country dictionary.
+    Extracts population data from a country dictionary using pandas.
 
     Args:
         country_dict (dict): A dictionary containing population data.
@@ -15,12 +14,12 @@ def get_population(country_dict):
     labels = []
     values = []
     for label, value in country_dict.items():
-        match = re.search(r'(\d{4}) Population', label)
-        if match:
-            year = match.group(1)
-            population_value = int(value)
-            labels.append(year)
-            values.append(population_value)
+        if 'Population' in label:
+            year = label.split(' ')[0]            
+            if year.isdigit(): # Check if 'year' is a valid integer
+                population_value = int(value)
+                labels.append(year)
+                values.append(population_value)
     return labels, values
 
 def population_by_country(data, country):
@@ -34,5 +33,5 @@ def population_by_country(data, country):
     Returns:
         list: A list of dictionaries containing population data for the specified country.
     """
-    result = [item for item in data if item['Country'] == country]
+    result = data[data['Country'] == country]
     return result
