@@ -1,30 +1,33 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.templating import Jinja2Templates
 from starlette.responses import HTMLResponse, FileResponse
 from src.chart_generator import generate_pie_chart_for_continent, generate_bar_chart_for_country
+from src.utils import delete_images_in_directory
 import pandas as pd
 import uvicorn
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 # Load the data from the CSV file once when the application starts
 df = pd.read_csv('./db/data.csv')
 data = df.to_dict(orient='records')
+delete_images_in_directory('./img/')
+
 
 # Define a function for the root endpoint
-@app.get('/')
-def get_routes():
-    return {
-        "routes": [
-            "Full Data: http://localhost:8000/data",
-            "Countries: http://localhost:8000/country/{name_country}",
-            "Continent: http://localhost:8000/continent/{name_continent}",
-            "Population in Year (YYYY): http://localhost:8000/population/{year}/{population}",
-            "Visualize Data: http://localhost:8000/visualize",
-            "Generate Bar Chart: http://localhost:8000/generate_bar_chart/{country_name}",
-            "Generate Pie Chart: http://localhost:8000/generate_pie_chart/{continent_name}",
-            "Note: Use underscores (_) instead of spaces in continent_name for pie charts (e.g., 'South_America' or 'North_America').",
-        ]
-    }
+@app.get('/', response_class=HTMLResponse, name="root")
+async def get_routes(request: Request):
+    route_items = [
+        {"name": "Full Data", "url": request.url_for("get_data")},
+        {"name": "Countries", "url": request.url_for("get_country_data", country_name="colombia")},
+        {"name": "Continent", "url": request.url_for("get_continent_data", continent_name="south_america")},
+        {"name": "Population in Year (YYYY)", "url": request.url_for("get_population_data", year=2022, population=50000000)},
+        {"name": "Visualize Data", "url": request.url_for("visualize_data")},
+        {"name": "Generate Bar Chart", "url": request.url_for("generate_bar_chart_route", country_name="colombia")},
+        {"name": "Generate Pie Chart", "url": request.url_for("generate_pie_chart_route", continent_name="south_america")},
+    ]
+    return templates.TemplateResponse("routes.html", {"request": request, "routes": route_items})
 
 @app.get('/data')
 def get_data():
@@ -32,8 +35,8 @@ def get_data():
 
 @app.get('/continent/{continent_name}')
 def get_continent_data(continent_name: str):
-    continent_name_upper = continent_name.title()
-    result = df[df['Continent'].str.contains(continent_name_upper, case=False)]
+    continent_name = continent_name.replace("_", " ").title()
+    result = df[df['Continent'] == continent_name]
     if result.empty:
         return {"message": f"No data found for the continent {continent_name}"}
     continent_data = result.to_dict(orient='records')
@@ -41,8 +44,8 @@ def get_continent_data(continent_name: str):
 
 @app.get('/country/{country_name}')
 def get_country_data(country_name: str):
-    country_name_upper = country_name.title()
-    result = df[df['Country'].str.contains(country_name_upper, case=False)]
+    country_name = country_name.replace("_", " ").title()
+    result = df[df['Country'].str.contains(country_name, case=False)]
     if result.empty:
         return {"message": f"No data found for the country {country_name}"}
     country_data = result.to_dict(orient='records')
@@ -65,21 +68,25 @@ def visualize_data():
 
 @app.get('/generate_bar_chart/{country_name}')
 def generate_bar_chart_route(country_name: str):
-    country_name = country_name.replace("_", " ").title()  # Formatea el nombre del país
-    result = df[df['Country'].str.contains(country_name, case=False)]
+    country_name = country_name.replace("_", " ").title()
+    #Revisar si se puede dejar este control de error aquí a controlar desde la def
+    '''result = df[df['Country'] == country_name]
     if result.empty:
-        raise HTTPException(status_code=404, detail=f"No data found for the country {country_name}")
+        raise HTTPException(status_code=404, detail=f"No data found for the country {country_name}")'''
     generate_bar_chart_for_country(df, country_name)
+    country_name = country_name.replace(" ", "_")
     image_path = f'./img/bar_{country_name}.png'
     return FileResponse(image_path, media_type="image/png")
 
 @app.get('/generate_pie_chart/{continent_name}')
 def generate_pie_chart_route(continent_name: str):
-    continent_name_formatted = continent_name.replace("_", " ").title()
-    result = df[df['Continent'].str.contains(continent_name_formatted, case=False)]
+    continent_name = continent_name.replace("_", " ").title()
+    #Revisar si se puede dejar este control de error aquí a controlar desde la def
+    '''result = df[df['Continent'] == continent_name] #result = df[df['Continent'].str.contains(continent_name, case=False)]
     if result.empty:
-        raise HTTPException(status_code=404, detail=f"No data found for the continent {continent_name_formatted}")
-    generate_pie_chart_for_continent(df, continent_name_formatted)
+        raise HTTPException(status_code=404, detail=f"No data found for the continent {continent_name}")'''
+    generate_pie_chart_for_continent(df, continent_name)
+    continent_name = continent_name.replace(" ", "_")
     image_path = f'./img/pie_{continent_name}.png'
     return FileResponse(image_path, media_type="image/png")
 

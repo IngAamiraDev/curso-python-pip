@@ -1,0 +1,52 @@
+<!--<!DOCTYPE html>
+<html>
+<head>
+    <title>API Routes</title>
+</head>
+<body>
+    <h1>API Routes</h1>
+    <ul>
+        <li><a href="{{ routes[0].example }}">{{ routes[0].name }}</a> - Example: GET request to fetch full data. (e.g., http://localhost:8000/data )</li>
+        <li><a href="{{ routes[1].example }}">{{ routes[1].name }}</a> - Example: GET request to fetch data for a specific country (e.g., http://localhost:8000/country/colombia).</li>
+        <li><a href="{{ routes[2].example }}">{{ routes[2].name }}</a> - Example: GET request to fetch data for a specific continent (e.g., http://localhost:8000/continent/north_america).</li>
+        <li><a href="{{ routes[3].example }}">{{ routes[3].name }}</a> - Example: GET request to fetch data for a specific year and population (e.g., http://localhost:8000/population/2022/50000000).</li>
+        <li><a href="{{ routes[4].example }}">{{ routes[4].name }}</a> - Example: GET request to visualize data (e.g., http://localhost:8000/visualize).</li>
+        <li><a href="{{ routes[5].example }}">{{ routes[5].name }}</a> - Example: GET request to generate a bar chart for a specific country (e.g., http://localhost:8000/generate_bar_chart/colombia).</li>
+        <li><a href="{{ routes[6].example }}">{{ routes[6].name }}</a> - Example: GET request to generate a pie chart for a specific continent (e.g., http://localhost:8000/generate_pie_chart/north_america).</li>
+    </ul>
+</body>
+</html>-->
+
+<!--OK<!DOCTYPE html>
+<html>
+<head>
+    <title>API Routes</title>
+</head>
+<body>
+    <h1>Available API Routes</h1>
+    <ul>
+        {% for route in routes %}
+            <li><a href="{{ route.url }}">{{ route.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <p><strong>Note:</strong> Use underscores (_) instead of spaces in continent_name for pie charts (e.g., 'south_america' or 'north_america').</p>
+</body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Routes</title>
+</head>
+<body>
+    <h1>API Routes</h1>
+    <ul>
+        {% for route in routes %}
+            <li>
+                <a href="{{ route.url }}">{{ route.name }}</a> - Example: {{ route.example }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

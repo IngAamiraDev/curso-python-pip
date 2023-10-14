@@ -12,7 +12,7 @@ def generate_pie_chart_for_continent(data, continent):
     Returns:
         None
     """
-    continent_data = data[data['Continent'].str.contains(continent, case=False)]
+    continent_data = data[data['Continent'] == continent] #continent_data = data[data['Continent'].str.contains(continent, case=False)]
     if continent_data.empty:
         print(f"No data found for {continent}.")
         return
@@ -31,8 +31,7 @@ def generate_bar_chart_for_country(data, country):
     Returns:
         None
     """
-
-    result = data[data['Continent'].str.contains(country, case=False)]
+    result = data[data['Country'] == country]
     if result.empty:
         print(f"No data found for {country}.")
         return

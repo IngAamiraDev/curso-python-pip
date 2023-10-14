@@ -30,6 +30,7 @@ def customize_bar_chart(ax):
     for tick in vals:
         ax.axhline(y=tick, linestyle='dashed', alpha=0.4, color='#c3c9c5', zorder=1)
 
+
 def generate_bar_chart(labels, values, country):
     """
     Generate a bar chart showing the population of a specific country over the years.
@@ -42,9 +43,7 @@ def generate_bar_chart(labels, values, country):
     Returns:
         None
     """
-    # Reemplaza espacios con guiones bajos y capitaliza las palabras
-    country_formatted = country.replace(" ", "_").title()
-
+    country = country.replace(" ", "_").title()
     plt.rcParams['font.sans-serif'] = ['Lato']
     plt.rcParams['font.weight'] = "medium"
     fig, ax = plt.subplots()
@@ -66,11 +65,9 @@ def generate_bar_chart(labels, values, country):
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width() / 2, height, f'{height/1e6:,.0f} M', ha='center', va='bottom', fontsize=8, fontweight='bold')        
     customize_bar_chart(ax)
-    
-    # Utiliza el nombre de país formateado para el nombre del archivo
-    plt.savefig(f'./img/bar_{country_formatted}.png')
+    plt.savefig(f'./img/bar_{country}.png')
     plt.close()
-    print(f'Generated bar chart for {country_formatted} in path: "./img"')
+    print(f'Generated bar chart for {country} in path: "./img"')
 
 
 def generate_pie_chart(labels, values, continent, top_n=5):
@@ -87,14 +84,13 @@ def generate_pie_chart(labels, values, continent, top_n=5):
         None
     """
     # Reemplaza espacios con guiones bajos y capitaliza las palabras
-    continent_formatted = continent.replace(" ", "_").title()
-
+    continent = continent.replace(" ", "_").title()
     sorted_data = sorted(zip(values, labels), reverse=True)
     top_values, top_labels = zip(*sorted_data[:top_n])
     fig, ax = plt.subplots()
     ax.pie(top_values, labels=top_labels, autopct='%1.1f%%', colors=colors_palette, shadow=True, startangle=140)
     ax.axis('equal')
     plt.title(f"Top {top_n} Population Percentage for {continent}", size=14, weight='bold')
-    plt.savefig(f'./img/pie_{continent_formatted}.png')
+    plt.savefig(f'./img/pie_{continent}.png')
     plt.close()
-    print(f'Generated pie chart for {continent_formatted} in path: "./img"')
+    print(f'Generated pie chart for {continent} in path: "./img"')

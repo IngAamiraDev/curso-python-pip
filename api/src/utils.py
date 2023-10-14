@@ -1,3 +1,14 @@
+import os
+
+def delete_images_in_directory(directory_path):
+    try:
+        for filename in os.listdir(directory_path):
+            if filename.endswith(".png"):
+                file_path = os.path.join(directory_path, filename)
+                os.remove(file_path)
+                print(f"Eliminada la imagen: {filename}")
+    except Exception as e:
+        print(f"Error al eliminar imágenes: {str(e)}")
 
 def get_population(country_dict):
     """
