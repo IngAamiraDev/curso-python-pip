@@ -33,5 +33,5 @@ def population_by_country(data, country):
     Returns:
         list: A list of dictionaries containing population data for the specified country.
     """
-    result = data[data['Country'] == country]
+    result = data[data['Country'].str.contains(country, case=False)]
     return result

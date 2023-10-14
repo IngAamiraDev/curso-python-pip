@@ -3,13 +3,6 @@ from starlette.responses import HTMLResponse, FileResponse
 from src.chart_generator import generate_pie_chart_for_continent, generate_bar_chart_for_country
 import pandas as pd
 import uvicorn
-import matplotlib.pyplot as plt
-from io import BytesIO
-import json
-import base64
-from PIL import Image
-import os
-import tempfile
 
 app = FastAPI()
 
@@ -27,7 +20,9 @@ def get_routes():
             "Continent: http://localhost:8000/continent/{name_continent}",
             "Population in Year (YYYY): http://localhost:8000/population/{year}/{population}",
             "Visualize Data: http://localhost:8000/visualize",
-            "Plot Population: http://localhost:8000/plot_population",
+            "Generate Bar Chart: http://localhost:8000/generate_bar_chart/{country_name}",
+            "Generate Pie Chart: http://localhost:8000/generate_pie_chart/{continent_name}",
+            "Note: Use underscores (_) instead of spaces in continent_name for pie charts (e.g., 'South_America' or 'North_America').",
         ]
     }
 
@@ -37,8 +32,8 @@ def get_data():
 
 @app.get('/continent/{continent_name}')
 def get_continent_data(continent_name: str):
-    continent_name_upper = continent_name.capitalize()
-    result = df[df['Continent'] == continent_name_upper]
+    continent_name_upper = continent_name.title()
+    result = df[df['Continent'].str.contains(continent_name_upper, case=False)]
     if result.empty:
         return {"message": f"No data found for the continent {continent_name}"}
     continent_data = result.to_dict(orient='records')
@@ -46,8 +41,8 @@ def get_continent_data(continent_name: str):
 
 @app.get('/country/{country_name}')
 def get_country_data(country_name: str):
-    country_name_upper = country_name.capitalize()
-    result = df[df['Country'] == country_name_upper]
+    country_name_upper = country_name.title()
+    result = df[df['Country'].str.contains(country_name_upper, case=False)]
     if result.empty:
         return {"message": f"No data found for the country {country_name}"}
     country_data = result.to_dict(orient='records')
@@ -55,7 +50,6 @@ def get_country_data(country_name: str):
 
 @app.get('/population/{year}/{population}')
 def get_population_data(year: int, population: int):
-    # Add validation for year and population here if needed
     column_name = f"{year} Population"
     result = df[df[column_name] >= population]
     if result.empty:
@@ -69,34 +63,25 @@ def visualize_data():
     html_content = f"<html><head></head><body>{data_html}</body></html>"
     return HTMLResponse(content=html_content)
 
-'''@app.get('/plot_population')
-def plot_population():
-    year = 2015  # Year for which you want to generate the graph
-    column_name = f"{year} Population"
-    plt.figure(figsize=(10, 6))
-    plt.bar(df['Country'], df[column_name])
-    plt.title(f'Population in {year}')
-    plt.xlabel('Country')
-    plt.ylabel('Population')
-
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-
-    # Crear un archivo temporal para guardar la imagen
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
-        temp_filename = temp_file.name
-        temp_file.write(buffer.read())
-
-    return FileResponse(temp_filename, media_type="image/png")'''
-
 @app.get('/generate_bar_chart/{country_name}')
 def generate_bar_chart_route(country_name: str):
-    country_name_upper = country_name.capitalize()
-    result = df[df['Country'] == country_name_upper]
+    country_name = country_name.replace("_", " ").title()  # Formatea el nombre del país
+    result = df[df['Country'].str.contains(country_name, case=False)]
     if result.empty:
         raise HTTPException(status_code=404, detail=f"No data found for the country {country_name}")
     generate_bar_chart_for_country(df, country_name)
+    image_path = f'./img/bar_{country_name}.png'
+    return FileResponse(image_path, media_type="image/png")
+
+@app.get('/generate_pie_chart/{continent_name}')
+def generate_pie_chart_route(continent_name: str):
+    continent_name_formatted = continent_name.replace("_", " ").title()
+    result = df[df['Continent'].str.contains(continent_name_formatted, case=False)]
+    if result.empty:
+        raise HTTPException(status_code=404, detail=f"No data found for the continent {continent_name_formatted}")
+    generate_pie_chart_for_continent(df, continent_name_formatted)
+    image_path = f'./img/pie_{continent_name}.png'
+    return FileResponse(image_path, media_type="image/png")
 
 if __name__ == '__main__':
     uvicorn.run(app, host="localhost", port=8000)
