@@ -8,14 +8,11 @@ import uvicorn
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-
-# Load the data from the CSV file once when the application starts
 df = pd.read_csv('./db/data.csv')
 data = df.to_dict(orient='records')
 delete_images_in_directory('./img/')
 
 
-# Define a function for the root endpoint
 @app.get('/', response_class=HTMLResponse, name="root")
 async def get_routes(request: Request):
     route_items = [
@@ -29,18 +26,21 @@ async def get_routes(request: Request):
     ]
     return templates.TemplateResponse("routes.html", {"request": request, "routes": route_items})
 
+
 @app.get('/data')
 def get_data():
     return data
 
+
 @app.get('/continent/{continent_name}')
 def get_continent_data(continent_name: str):
     continent_name = continent_name.replace("_", " ").title()
-    result = df[df['Continent'] == continent_name]
+    result = df[df['Continent'].str.contains(continent_name, case=False)]
     if result.empty:
         return {"message": f"No data found for the continent {continent_name}"}
     continent_data = result.to_dict(orient='records')
     return continent_data
+
 
 @app.get('/country/{country_name}')
 def get_country_data(country_name: str):
@@ -51,6 +51,7 @@ def get_country_data(country_name: str):
     country_data = result.to_dict(orient='records')
     return country_data
 
+
 @app.get('/population/{year}/{population}')
 def get_population_data(year: int, population: int):
     column_name = f"{year} Population"
@@ -60,35 +61,39 @@ def get_population_data(year: int, population: int):
     population_data = result.to_dict(orient='records')
     return population_data
 
+
 @app.get('/visualize')
 def visualize_data():
     data_html = df.to_html()
     html_content = f"<html><head></head><body>{data_html}</body></html>"
     return HTMLResponse(content=html_content)
 
+
 @app.get('/generate_bar_chart/{country_name}')
 def generate_bar_chart_route(country_name: str):
     country_name = country_name.replace("_", " ").title()
-    #Revisar si se puede dejar este control de error aquí a controlar desde la def
-    '''result = df[df['Country'] == country_name]
+    result = df[df['Country'] == country_name]
+    print(result)
     if result.empty:
-        raise HTTPException(status_code=404, detail=f"No data found for the country {country_name}")'''
-    generate_bar_chart_for_country(df, country_name)
+        raise HTTPException(status_code=404, detail=f"No data found for the country {country_name}")
+    print(result)
+    generate_bar_chart_for_country(result, country_name)
     country_name = country_name.replace(" ", "_")
     image_path = f'./img/bar_{country_name}.png'
     return FileResponse(image_path, media_type="image/png")
 
+
 @app.get('/generate_pie_chart/{continent_name}')
 def generate_pie_chart_route(continent_name: str):
     continent_name = continent_name.replace("_", " ").title()
-    #Revisar si se puede dejar este control de error aquí a controlar desde la def
-    '''result = df[df['Continent'] == continent_name] #result = df[df['Continent'].str.contains(continent_name, case=False)]
+    result = df[df['Continent'] == continent_name]
     if result.empty:
-        raise HTTPException(status_code=404, detail=f"No data found for the continent {continent_name}")'''
-    generate_pie_chart_for_continent(df, continent_name)
+        raise HTTPException(status_code=404, detail=f"No data found for the continent {continent_name}")
+    generate_pie_chart_for_continent(result, continent_name)
     continent_name = continent_name.replace(" ", "_")
     image_path = f'./img/pie_{continent_name}.png'
     return FileResponse(image_path, media_type="image/png")
+
 
 if __name__ == '__main__':
     uvicorn.run(app, host="localhost", port=8000)
