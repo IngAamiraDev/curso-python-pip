@@ -6,47 +6,84 @@
 <body>
     <h1>API Routes</h1>
     <ul>
-        <li><a href="{{ routes[0].example }}">{{ routes[0].name }}</a> - Example: GET request to fetch full data. (e.g., http://localhost:8000/data )</li>
-        <li><a href="{{ routes[1].example }}">{{ routes[1].name }}</a> - Example: GET request to fetch data for a specific country (e.g., http://localhost:8000/country/colombia).</li>
-        <li><a href="{{ routes[2].example }}">{{ routes[2].name }}</a> - Example: GET request to fetch data for a specific continent (e.g., http://localhost:8000/continent/north_america).</li>
-        <li><a href="{{ routes[3].example }}">{{ routes[3].name }}</a> - Example: GET request to fetch data for a specific year and population (e.g., http://localhost:8000/population/2022/50000000).</li>
-        <li><a href="{{ routes[4].example }}">{{ routes[4].name }}</a> - Example: GET request to visualize data (e.g., http://localhost:8000/visualize).</li>
-        <li><a href="{{ routes[5].example }}">{{ routes[5].name }}</a> - Example: GET request to generate a bar chart for a specific country (e.g., http://localhost:8000/generate_bar_chart/colombia).</li>
-        <li><a href="{{ routes[6].example }}">{{ routes[6].name }}</a> - Example: GET request to generate a pie chart for a specific continent (e.g., http://localhost:8000/generate_pie_chart/north_america).</li>
-    </ul>
-</body>
-</html>-->
-
-<!--OK<!DOCTYPE html>
-<html>
-<head>
-    <title>API Routes</title>
-</head>
-<body>
-    <h1>Available API Routes</h1>
-    <ul>
         {% for route in routes %}
-            <li><a href="{{ route.url }}">{{ route.name }}</a></li>
+            <li>
+                <a href="{{ route.url }}">{{ route.name }}</a>
+            </li>
         {% endfor %}
     </ul>
-    <p><strong>Note:</strong> Use underscores (_) instead of spaces in continent_name for pie charts (e.g., 'south_america' or 'north_america').</p>
 </body>
 </html>-->
-
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>API Routes</title>
+    <title>API Documentation</title>
 </head>
 <body>
-    <h1>API Routes</h1>
+    <h1>API Documentation</h1>
+
+    <p><strong>Note:</strong> The database contains data in English, so please use English names for countries and continents in your GET requests. Compound names should be separated by underscores ("_"), for example, "south_america".</p>
+
+    <h2>List of Available Routes</h2>
     <ul>
-        {% for route in routes %}
-            <li>
-                <a href="{{ route.url }}">{{ route.name }}</a> - Example: {{ route.example }}
-            </li>
-        {% endfor %}
+        <li><strong>GET /</strong>: Get information about the API</li>
+        <li><strong>GET /data</strong>: Get the full dataset</li>
+        <li><strong>GET /continent/{continent_name}</strong>: Get data for a specific continent</li>
+        <li><strong>GET /country/{country_name}</strong>: Get data for a specific country</li>
+        <li><strong>GET /population/{year}/{population}</strong>: Get data for countries with a population greater than a certain threshold</li>
+        <li><strong>GET /visualize</strong>: Visualize the dataset</li>
+        <li><strong>GET /generate_bar_chart/{country_name}</strong>: Generate a bar chart for a specific country</li>
+        <li><strong>GET /generate_pie_chart/{continent_name}</strong>: Generate a pie chart for a specific continent</li>
     </ul>
+
+    <h2>Route Details</h2>
+
+    <h3>GET /</h3>
+    <p>Get information about the API.</p>
+
+    <h3>GET /data</h3>
+    <p>Get the full dataset.</p>
+
+    <h3>GET /continent/{continent_name}</h3>
+    <p>Get data for a specific continent.</p>
+    <p><strong>Parameters:</strong></p>
+    <p><code>continent_name</code> (string): The name of the continent.</p>
+    <p><strong>Example:</strong></p>
+    <code>/continent/south_america</code>
+
+    <h3>GET /country/{country_name}</h3>
+    <p>Get data for a specific country.</p>
+    <p><strong>Parameters:</strong></p>
+    <p><code>country_name</code> (string): The name of the country.</p>
+    <p><strong>Example:</strong></p>
+    <code>/country/brazil</code>
+
+    <h3>GET /population/{year}/{population}</h3>
+    <p>Get data for countries with a population greater than a certain threshold.</p>
+    <p><strong>Parameters:</strong></p>
+    <p><code>year</code> (int): The target year for population data.</p>
+    <p><code>population</code> (int): The minimum population threshold.</p>
+    <p><strong>Example:</strong></p>
+    <code>/population/2022/50000000</code>
+
+    <h3>GET /visualize</h3>
+    <p>Visualize the dataset.</p>
+    <p><strong>Example:</strong></p>
+    <code>/visualize</code>
+
+    <h3>GET /generate_bar_chart/{country_name}</h3>
+    <p>Generate a bar chart for a specific country.</p>
+    <p><strong>Parameters:</strong></p>
+    <p><code>country_name</code> (string): The name of the country.</p>
+    <p><strong>Example:</strong></p>
+    <code>/generate_bar_chart/canada</code>
+
+    <h3>GET /generate_pie_chart/{continent_name}</h3>
+    <p>Generate a pie chart for a specific continent.</p>
+    <p><strong>Parameters:</strong></p>
+    <p><code>continent_name</code> (string): The name of the continent.</p>
+    <p><strong>Example:</strong></p>
+    <code>/generate_pie_chart/north_america</code>
 </body>
 </html>
